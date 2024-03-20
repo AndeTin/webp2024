@@ -1,0 +1,38 @@
+
+<body>
+  <div id="container" tabindex="0" class="blockquote text-nowrap">
+  </div>
+
+  <script>
+    var container = document.getElementById('container');
+
+    window.onload = function() {
+      var randomChars = "";
+      for (var i = 0; i < Math.floor(Math.random() * 2 +1); i++) {
+        var randomChar = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+        randomChars += randomChar;
+      }
+      container.textContent += randomChars;
+      console.log(randomChars);
+
+    window.addEventListener("keyup", function(e) {
+      if (e.key == container.textContent.charAt(0)) {
+        container.textContent = container.textContent.slice(1);
+      }
+      else if (e.key == 'Escape') {
+        container.textContent = "";
+      }
+      else if (e.key == 'Backspace') {
+        container.textContent = container.textContent.slice(0, -1);
+      }
+      else {
+        container.textContent += e.key;
+      }
+    });
+  
+    
+    };
+  </script>
+
+  
+</body>
