@@ -20,13 +20,23 @@
             color: white; 
         } 
         th:first-child, td:first-child {
-            width: 30%; 
+            width: 30%; /* Adjust this value to make the first column longer or shorter as needed */
         }
         th:nth-child(2), td:nth-child(2) {
-            width: 20%; 
+            width: 20%; /* Adjust this value to make the second column longer or shorter as needed */
+        }
+        .title-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            margin-right: 20px;
         }
         .search-container {
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
         .search-container input[type=text] {
             padding: 10px;
@@ -35,15 +45,23 @@
         .search-container button {
             padding: 10px 15px;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>景點觀光展覽資訊</h1>
+    <div class="title-container">
+        <h1 class="title">景點觀光展覽資訊</h1>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="搜尋名稱..." onkeydown="handleKeyPress(event)">
-        <button onclick="searchData()">搜尋</button>
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="搜尋名稱..." onkeydown="handleKeyPress(event)">
+            <button onclick="searchData()">搜尋</button>
+        </div>
     </div>
 
     <table id="csie">
@@ -60,6 +78,7 @@
     </table>
     <div class="pagination">
         <button onclick="prevPage()">上一頁</button>
+        <span>第 1 / 1 頁</span>
         <button onclick="nextPage()">下一頁</button>
     </div>
     
@@ -119,17 +138,18 @@
 
         function updatePaginationButtons() {
             const pagination = document.querySelector('.pagination');
+            const totalPages = Math.ceil(currentData.length / rowsPerPage);
             pagination.innerHTML = '';
 
             if (currentPage > 1) {
                 pagination.innerHTML += '<button onclick="prevPage()">上一頁</button>';
             }
 
+            pagination.innerHTML += '<span>第 ' + currentPage + ' / ' + totalPages + ' 頁</span>';
+
             if ((currentPage * rowsPerPage) < currentData.length) {
                 pagination.innerHTML += '<button onclick="nextPage()">下一頁</button>';
             }
-            const totalPages = Math.ceil(currentData.length / rowsPerPage);
-            pagination.innerHTML += '<span>第 ' + currentPage + ' / ' + totalPages + ' 頁</span>';
         }
 
         function searchData() {
