@@ -19,10 +19,33 @@
             background-color: #04AA6D; 
             color: white; 
         } 
+        th:first-child, td:first-child {
+            width: 30%; /* Adjust this value to make the first column longer or shorter as needed */
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 20%; /* Adjust this value to make the second column longer or shorter as needed */
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .search-container input[type=text] {
+            padding: 10px;
+            margin-right: 10px;
+        }
+        .search-container button {
+            padding: 10px 15px;
+        }
     </style>
 </head>
 <body>
     <h1>景點觀光展覽資訊</h1>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="搜尋名稱..." onkeydown="handleKeyPress(event)">
+        <button onclick="searchData()">搜尋</button>
+    </div>
+
     <table id="csie">
         <thead>
             <tr>
@@ -107,6 +130,20 @@
             }
             const totalPages = Math.ceil(currentData.length / rowsPerPage);
             pagination.innerHTML += '<span>第 ' + currentPage + ' / ' + totalPages + ' 頁</span>';
+        }
+
+        function searchData() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = dataset.filter(data => data.title.toLowerCase().includes(searchInput));
+            currentData = filteredData;
+            currentPage = 1;
+            displayTableData(currentPage);
+        }
+
+        function handleKeyPress(event) {
+            if (event.keyCode === 13) {
+                searchData();
+            }
         }
     </script>
 </body>
