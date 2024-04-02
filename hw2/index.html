@@ -1,0 +1,110 @@
+<html>
+<head>
+    <style> 
+        table { 
+            font-family: Arial, Helvetica, sans-serif; 
+            border-collapse: collapse; 
+            width: 100%; 
+        } 
+        td, th { 
+            border: 1px solid #ddd; 
+            padding: 6px; 
+        } 
+        tr:nth-child(even){background-color: #f2f2f2;} 
+        tr:hover {background-color: #ddd;} 
+        th { 
+            padding-top: 12px; 
+            padding-bottom: 12px; 
+            text-align: left; 
+            background-color: #04AA6D; 
+            color: white; 
+        } 
+    </style>
+</head>
+<body>
+    <h1>景點觀光展覽資訊</h1>
+    <table id="csie">
+        <thead>
+            <tr>
+                <th>名稱</th>
+                <th>地點</th>
+                <th>票價</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Table rows will be inserted here -->
+        </tbody>
+    </table>
+    <div class="pagination">
+        <button onclick="prevPage()">上一頁</button>
+        <button onclick="nextPage()">下一頁</button>
+    </div>
+
+    <script>
+        var openUrl = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6";
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', openUrl, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                dataset = JSON.parse(this.responseText);
+                addNewData(dataset);
+            }
+        }
+
+        const rowsPerPage = 10;
+        let currentPage = 1;
+        let currentData = [];
+
+        function addNewData(dataset) {
+            currentData = dataset;
+            displayTableData(currentPage);
+        }
+
+        function displayTableData(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedData = currentData.slice(start, end);
+
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+
+            paginatedData.forEach(function(data) {
+                var row = tableBody.insertRow(-1);
+                row.insertCell(0).innerHTML = data['title'];
+                row.insertCell(1).innerHTML = data['showInfo'][0]['locationName'];
+                row.insertCell(2).innerHTML = data['showInfo'][0]['price'];
+            });
+
+            updatePaginationButtons();
+        }
+
+        function nextPage() {
+            if ((currentPage * rowsPerPage) < currentData.length) {
+                currentPage++;
+                displayTableData(currentPage);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTableData(currentPage);
+            }
+        }
+
+        function updatePaginationButtons() {
+            const pagination = document.querySelector('.pagination');
+            pagination.innerHTML = '';
+
+            if (currentPage > 1) {
+                pagination.innerHTML += '<button onclick="prevPage()">上一頁</button>';
+            }
+
+            if ((currentPage * rowsPerPage) < currentData.length) {
+                pagination.innerHTML += '<button onclick="nextPage()">下一頁</button>';
+            }
+        }
+    </script>
+</body>
+</html>
