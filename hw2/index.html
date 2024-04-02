@@ -39,6 +39,7 @@
         <button onclick="prevPage()">上一頁</button>
         <button onclick="nextPage()">下一頁</button>
     </div>
+    
 
     <script>
         var openUrl = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6";
@@ -72,7 +73,7 @@
             paginatedData.forEach(function(data) {
                 var row = tableBody.insertRow(-1);
                 row.insertCell(0).innerHTML = data['title'];
-                row.insertCell(1).innerHTML = data['showInfo'][0]['locationName'];
+                row.insertCell(1).innerHTML = data['showInfo'][0]['location'];
                 row.insertCell(2).innerHTML = data['showInfo'][0]['price'];
             });
 
@@ -104,6 +105,8 @@
             if ((currentPage * rowsPerPage) < currentData.length) {
                 pagination.innerHTML += '<button onclick="nextPage()">下一頁</button>';
             }
+            const totalPages = Math.ceil(currentData.length / rowsPerPage);
+            pagination.innerHTML += '<span>第 ' + currentPage + ' / ' + totalPages + ' 頁</span>';
         }
     </script>
 </body>
