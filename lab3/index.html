@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flickr Photo Gallery</title>
+    <style>
+        .gallery {
+            --g: 6px; /* the gap */
+            display: grid;
+            width: 1200px; /* the size */
+            aspect-ratio: 1;
+            grid: auto-flow 1fr / repeat(3, 1fr);
+            gap: var(--g);
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale();
+            cursor: pointer;
+            transition: .5s;
+        }
+
+        .gallery img:hover {
+            filter: grayscale(0);
+        }
+
+        .gallery img:nth-child(2) {
+            grid-area: 1/2/span 2/span 2;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, calc(50% + var(--g) / 4) 100%, 0 calc(50% - var(--g) / 4));
+        }
+
+        .gallery img:nth-child(3) {
+            grid-area: 2/1/span 2/span 2;
+            clip-path: polygon(0 0, calc(50% - var(--g) / 4) 0, 100% calc(50% + var(--g) / 4), 100% 100%, 0 100%);
+        }
+    </style>
+</head>
+<body>
+    <button id="startButton">Get Image</button>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        var idListUrl = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=ca370d51a054836007519a00ff4ce59e&per_page=10&format=json&nojsoncallback=1';
+        var photoSizesUrl = 'https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=ca370d51a054836007519a00ff4ce59e&photo_id=';
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            getIds();
+            document.getElementById('startButton').disabled = true; // Disable the button after clicking
+        });
+
+        function getIds() {
+            fetch(idListUrl)
+                .then(response => response.json())
+                .then(data => {
+                    var ids = data.photos.photo.map(photo => photo.id);
+                    getPhotos(ids);
+                })
+                .catch(error => console.error('Error fetching ids:', error));
+        }
+
+        function getPhotos(ids) {
+            ids.forEach(id => {
+                fetch(photoSizesUrl + id + '&format=json&nojsoncallback=1')
+                    .then(response => response.json())
+                    .then(data => {
+                        var photoUrl = data.sizes.size[data.sizes.size.length - 1].source;
+                        addNewImage(photoUrl);
+                    })
+                    .catch(error => console.error('Error fetching photo:', error));
+            });
+        }
+
+        function addNewImage(photoUrl) {
+            var gal = document.getElementById("gallery");
+            var img = document.createElement("img");
+            img.setAttribute("src", photoUrl);
+            gal.appendChild(img);
+        }
+    </script>
+</body>
+</html>
